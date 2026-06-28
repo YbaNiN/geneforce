@@ -1,0 +1,66 @@
+name: Deploy to GitHub Pages
+
+on:
+  # Despliega en cada push a main.
+  push:
+    branches: [main]
+  # Permite lanzarlo manualmente desde la pestaña Actions.
+  workflow_dispatch:
+
+# Permisos necesarios para publicar en Pages.
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un único despliegue a la vez; cancela los anteriores en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar Rust con target WASM
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+
+      - name: Instalar wasm-pack
+        run: cargo install wasm-pack
+
+      - name: Instalar Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias del frontend
+        working-directory: web
+        run: npm install
+
+      - name: Compilar el núcleo a WASM
+        working-directory: web
+        run: npm run build:wasm
+
+      - name: Build de producción
+        working-directory: web
+        run: npm run build
+
+      - name: Subir artefacto de Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Desplegar en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
