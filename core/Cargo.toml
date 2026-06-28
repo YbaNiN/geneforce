@@ -1,0 +1,15 @@
+[package]
+name = "geneforge_core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8"
+rayon = { version = "1.10", optional = true }
+
+[features]
+# 'parallel' activa la búsqueda multihilo con rayon (para builds nativos).
+# En WASM de navegador (single-thread) se compila SIN esta feature y la
+# búsqueda cae a iteración secuencial automáticamente.
+default = ["parallel"]
+parallel = ["dep:rayon"]

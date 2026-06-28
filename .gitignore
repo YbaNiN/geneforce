@@ -1,0 +1,19 @@
+# Rust
+/target
+**/target
+Cargo.lock.bak
+
+# Node / frontend
+node_modules
+dist
+web/src/wasm
+
+# Editor / OS
+.DS_Store
+.idea
+.vscode
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

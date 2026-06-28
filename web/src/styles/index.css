@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-carbon-800 text-bone font-display antialiased;
+    /* Textura sutil de placa metálica: líneas finas casi imperceptibles. */
+    background-image: repeating-linear-gradient(
+      0deg,
+      rgba(255, 255, 255, 0.012) 0px,
+      rgba(255, 255, 255, 0.012) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+  }
+  /* Scrollbar acorde al tema. */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-carbon-900;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-steel rounded-sm;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-steel-muted;
+  }
+}
+
+@layer components {
+  /* Caja de un gen individual — placa metálica con la letra. */
+  .gene-box {
+    @apply flex items-center justify-center font-mono font-bold text-carbon-900 rounded-sm select-none;
+  }
+  .gene-g { @apply bg-gene-g; }
+  .gene-y { @apply bg-gene-y; }
+  .gene-h { @apply bg-gene-h; }
+  .gene-x { @apply bg-gene-x; }
+  .gene-w { @apply bg-gene-w; }
+
+  /* Botón primario óxido. */
+  .btn-rust {
+    @apply bg-rust text-carbon-900 font-semibold uppercase tracking-wide
+           transition-colors hover:bg-rust-light active:scale-[0.98]
+           disabled:opacity-40 disabled:cursor-not-allowed disabled:active:scale-100;
+  }
+
+  /* Botón secundario / contorno. */
+  .btn-ghost {
+    @apply border border-steel-light text-bone-muted uppercase tracking-wide
+           transition-colors hover:bg-carbon-600 hover:text-bone;
+  }
+
+  /* Panel con borde metálico. */
+  .panel {
+    @apply bg-carbon-700 border border-steel rounded-sm;
+  }
+
+  /* Etiqueta de sección. */
+  .section-label {
+    @apply text-xs uppercase tracking-widest text-bone-muted font-semibold;
+  }
+}
