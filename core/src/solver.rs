@@ -362,7 +362,7 @@ pub fn find_two_step_recipes(
             // La receta solo es GEN.2 genuina si el bridge participa realmente
             // en el cruce final (como centro o como donante).
             let bridge_used =
-                cand.center == bridge || cand.donors.iter().any(|d| *d == bridge);
+                cand.center == bridge || cand.donors.contains(&bridge);
             if bridge_used && cand.success_probability > 0.0 {
                 let total = step1.success_probability * cand.success_probability;
                 recipes.push(TwoStepRecipe {
@@ -485,7 +485,7 @@ mod tests {
         for r in &recipes {
             assert!((r.step1.success_probability - 1.0).abs() < 1e-9);
             let used = r.step2.center == r.bridge
-                || r.step2.donors.iter().any(|d| *d == r.bridge);
+                || r.step2.donors.contains(&r.bridge);
             assert!(used, "el bridge debe participar en el paso 2");
             assert!(
                 (r.total_probability - r.step2.success_probability).abs() < 1e-9
