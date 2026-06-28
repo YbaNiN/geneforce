@@ -40,12 +40,11 @@ async function loadWasm(): Promise<GeneForgeWasm> {
   initPromise = (async () => {
     let mod: GeneForgeWasm;
     try {
-      // El path en variable + comentario vite-ignore evita que el bundler intente
-      // resolver el módulo en build-time; se resuelve solo en runtime, cuando el
-      // WASM ya ha sido compilado con `npm run build:wasm`.
-      const wasmPath = "../wasm/geneforge_wasm.js";
-      mod = (await import(/* @vite-ignore */ wasmPath)) as GeneForgeWasm;
-    } catch {
+      // Import dinámico con ruta literal: Vite lo reconoce, empaqueta el módulo
+      // WASM en assets/ y reescribe la ruta correctamente en producción.
+      mod = (await import("../wasm/geneforge_wasm.js")) as unknown as GeneForgeWasm;
+    } catch (e) {
+      console.error("No se pudo cargar el módulo WASM:", e);
       throw new WasmNotBuiltError();
     }
     await mod.default();
