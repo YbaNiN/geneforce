@@ -48,6 +48,11 @@ jobs:
       - name: Build de producción
         working-directory: web
         run: npm run build
+        env:
+          VITE_WEBHOOK_PETICIONES: ${{ secrets.VITE_WEBHOOK_PETICIONES }}
+          VITE_WEBHOOK_SUGERENCIAS: ${{ secrets.VITE_WEBHOOK_SUGERENCIAS }}
+          VITE_WEBHOOK_REPORTES: ${{ secrets.VITE_WEBHOOK_REPORTES }}
+          VITE_WEBHOOK_CONTACTO: ${{ secrets.VITE_WEBHOOK_CONTACTO }}
 
       - name: Subir artefacto de Pages
         uses: actions/upload-pages-artifact@v3
