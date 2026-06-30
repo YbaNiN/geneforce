@@ -4,7 +4,9 @@ import { TargetPanel, type TargetCounts } from "./components/TargetPanel";
 import { OptionsPanel } from "./components/OptionsPanel";
 import { ResultCard } from "./components/ResultCard";
 import { TwoStepCard } from "./components/TwoStepCard";
+import { FormModal } from "./components/FormModal";
 import { solve, WasmNotBuiltError } from "./lib/breeder";
+import { FORM_DEFS, type FormKind } from "./lib/forms";
 import type {
   CandidateOut,
   GeneChar,
@@ -23,6 +25,7 @@ export default function App() {
   const [calculating, setCalculating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [highlighted, setHighlighted] = useState<Set<number>>(new Set());
+  const [activeForm, setActiveForm] = useState<FormKind | null>(null);
 
   const addPlant = useCallback((genes: string) => {
     setPlants((prev) => [...prev, genes]);
@@ -94,7 +97,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <Header />
+      <Header onOpenForm={setActiveForm} />
 
       <main className="max-w-5xl mx-auto px-4 pb-16">
         <div className="grid md:grid-cols-[1.3fr_1fr] gap-4">
@@ -200,35 +203,43 @@ export default function App() {
       </main>
 
       <Footer />
+
+      <FormModal kind={activeForm} onClose={() => setActiveForm(null)} />
     </div>
   );
 }
 
-function Header() {
+function Header({ onOpenForm }: { onOpenForm: (kind: FormKind) => void }) {
+  const formButtons = (Object.keys(FORM_DEFS) as FormKind[]).map((kind) => ({
+    kind,
+    label: FORM_DEFS[kind].label,
+  }));
+
   return (
     <header className="max-w-5xl mx-auto px-4 pt-8 pb-6">
-      <div className="flex items-center gap-3 pb-5 border-b border-steel">
+      <div className="flex flex-wrap items-center gap-3 pb-5 border-b border-steel">
         <div className="w-8 h-8 bg-rust flex items-center justify-center rotate-45 shrink-0">
-          <span className="-rotate-45 text-carbon-900 font-bold text-lg">
-            ⌬
-          </span>
+          <span className="-rotate-45 text-carbon-900 font-bold text-lg">⌬</span>
         </div>
         <div>
           <h1 className="text-xl font-bold uppercase tracking-[0.15em] text-bone leading-none">
-            Rust Breeder
+            GeneForge
           </h1>
           <p className="text-[11px] text-bone-muted tracking-wider uppercase font-mono mt-1">
             crossbreeding calculator
           </p>
         </div>
-        <div className="ml-auto flex gap-2">
-          <span className="text-[11px] px-2.5 py-1 border border-rust text-rust-light uppercase tracking-wide rounded-sm">
-            hemp
-          </span>
-          <span className="text-[11px] px-2.5 py-1 border border-steel-light text-bone-muted uppercase tracking-wide rounded-sm">
-            berries
-          </span>
-        </div>
+        <nav className="ml-auto flex flex-wrap gap-2">
+          {formButtons.map((b) => (
+            <button
+              key={b.kind}
+              onClick={() => onOpenForm(b.kind)}
+              className="text-[11px] px-3 py-1.5 border border-steel-light text-bone-muted uppercase tracking-wide rounded-sm transition-colors hover:border-rust hover:text-rust-light"
+            >
+              {b.label}
+            </button>
+          ))}
+        </nav>
       </div>
     </header>
   );
